@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\sessions;
+use App\Models\Session;
 use App\Models\User;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -73,11 +73,32 @@ class AdminController extends Controller
         return view('admin.pages.createSession');
     }
     public function allSession(){
-        return view('admin.pages.allSession');
+        $sessionList= Session::all();
+        return view('admin.pages.allSession',compact('sessionList'));
+    }
+    // public function editSessionName($sid){
+    //     $result =  DB::table('sessions')->where('id','=',$sid)->first();
+    //     return view('admin.pages.allSession',['sessions'=>$result]);
+    // }
+    public function updateSessionName(Request $req,$sid){
+        // $session_name = $req->session_name;
+        Session::where('id','=',$sid)
+        ->update([
+            'session_name' => $req->session_name
+        ]);
+        return redirect()->back()->with('success', 'Session Updated');
+    }
+    public function deleteSessionName($sid){
+        $deleted = DB::table('sessions')->where('id', '=', $sid)->delete();
+        return redirect('admin/all-session');
     }
     public function storeSession(Request $req){
           $session_name= $req->session_name;
-          $obj = new
+          $obj= new Session();
+          $obj->session_name= $session_name;
+          if($obj->save()){
+            return redirect()->back()->with('success','Session Created');
+        }
     }
     public function assignedTeacher(){
         return view('admin.pages.assignCourseTeacher');

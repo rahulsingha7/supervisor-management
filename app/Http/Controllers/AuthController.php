@@ -14,49 +14,41 @@ class AuthController extends Controller
         return view('auth.register');
     }
     public function registerStore(Request $req){
-        $name = $req->name;
-        $email = $req->email;
-        $sid= $req->sid;
-        $password = $req->password;
-        $confirm_pass = $req->confirm;
-
-        if($password != $confirm_pass){
-            return redirect()->back()->with('err', 'Password Mismatch');
-        }
-        else{
             $obj = new User();
-            $obj->name = $name;
-            $obj->email = $email;
-            $obj->sid = $sid;
-            $obj->password = md5($password);
-            $obj->role = 'student';
+            $obj->name = $req ->name;
+            $obj->email = $req->email;
+            $obj->student_id = $req->student_id;
+            $obj->password = md5($req->password);
+            $obj->role = $req->role;
 
             if($obj->save()){
-                return redirect()->back()->with('success', 'Registration Completed waiting for admin approval.');
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'account created'
+                ]);
             }
+               else{
+            return response()->json([
+                'status' => $obj,
+                'message' => 'User not created'
+            ]);
         }
-    }
+        }
     public function registerStoreTeacher(Request $req){
-        $name = $req->name;
-        $email = $req->email;
-        $password = $req->password;
-        $confirm_pass = $req->confirm;
-
-        if($password != $confirm_pass){
-            return redirect()->back()->with('error', 'Password Mismatch');
-        }
-        else{
             $obj = new User();
-            $obj->name = $name;
-            $obj->email = $email;
-            $obj->password = md5($password);
-            $obj->role = 'teacher';
+            $obj->name = $req->name;
+            $obj->email = $req->email;
+            $obj->teacher_id = $req->teacher_id;
+            $obj->password = md5($req->password);
+            $obj->role = $req->role;
 
             if($obj->save()){
-                return redirect()->back()->with('success', 'Registration Completed waiting for admin approval.');
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'account created'
+                ]);
             }
         }
-    }
     public function storeLogin(Request $req){
         $email = $req ->email;
         $password = $req->password;

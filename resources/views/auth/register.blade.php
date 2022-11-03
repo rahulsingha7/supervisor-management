@@ -10,7 +10,6 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <style type="text/css">
   
@@ -33,20 +32,18 @@ body{
   
 <h1 class="text-center text-success"> Registration page</h1>
 <br/>
+<div id="reg">
 
+</div>
 <div class="col-sm-12">
 
   <ul class="nav nav-pills" >
 
-  @if(Session::has('success'))
-    <div class="alert alert-success">
-      {{ Session::get('success') }}
-    </div>                      
-  @endif
     <li style="width:50%"><a class="btn btn-lg btn-default" data-toggle="tab" href="#home">Teacher</a></li>
     <li style="width:48%"><a class=" btn btn-lg btn-default" data-toggle="tab" href="#menu1">Student</a></li>
   </ul>
 <br/>
+<!-- Teacher -->
   <div class="tab-content">
     <div id="home" class="tab-pane fade in active">    
 <form method="post" action="{{url('register-store-teacher')}}">
@@ -57,6 +54,11 @@ body{
   </div>
 
   <div class="form-group">
+    <label for="Name">Teacher ID:</label>
+    <input type="number" class="form-control" name="teacher_id" id="teacher_id" placeholder="Enter Teacher ID">
+  </div>
+  
+  <div class="form-group">
     <label for="">Email address:</label>
     <input type="email" class="form-control" name="email" id="email" placeholder="Enter Your Email">
   </div>
@@ -64,11 +66,6 @@ body{
   <div class="form-group">
     <label for="password">Password:</label>
     <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password">
-    @if(Session::has('err'))
-       <div class="alert alert-danger">
-        {{ Session::get('err') }}
-       </div>
-     @endif
   </div>
 
   <div class="form-group">
@@ -76,7 +73,7 @@ body{
     <input type="password" class="form-control" name="confirm" id="confirm" placeholder="Confirm your password">
   </div>
 
-  <button type="submit" class="btn btn-default btn-lg">Register</button>
+  <button type="submit" id="submit" class="btn btn-default btn-lg">Register</button>
 
 </form>
 <br/>
@@ -84,7 +81,7 @@ body{
 
     </div>
     <div id="menu1" class="tab-pane fade">
-
+<!-- Student -->
 <form method="post" action="{{url('register-store')}}">
    @csrf
   <div class="form-group">
@@ -93,7 +90,7 @@ body{
   </div>
   <div class="form-group">
     <label for="Name">Student ID:</label>
-    <input type="number" class="form-control" name="sid" id="sid" placeholder="Enter Student ID">
+    <input type="number" class="form-control" name="student_id" id="student_id" placeholder="Enter Student ID">
   </div>
   
   <div class="form-group">
@@ -104,11 +101,6 @@ body{
   <div class="form-group">
     <label for="">Password:</label>
     <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password">
-    @if(Session::has('err'))
-       <div class="alert alert-danger">
-        {{ Session::get('err') }}
-       </div>
-     @endif
   </div>
 
   <div class="form-group">
@@ -116,7 +108,7 @@ body{
     <input type="password" class="form-control" name="confirm" id="confirm" placeholder="Confirm your password">
   </div>
 
-  <button type="submit" class="btn btn-default">Register</button>
+  <button type="submit" id="submit2" class="btn btn-default">Register</button>
 
 </form>
 <br/>
@@ -127,5 +119,93 @@ body{
   </div>
 </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+     $(document).ready(function() {
+            $('#submit').click(function() {
+                let name = $('#name').val();
+                let teacher_id = $('#teacher_id').val();
+                let email = $('#email').val();
+                var password = $('#password').val();
+                var confirm = $('#confirm').val();
+                var role='teacher';
+                var str = ''
+                $("#reg").empty();
+                if (name == '' || teacher_id == '' || email == '' || role == '' || password == '' ||
+                    confirm == '') {
+                    alert('Please fill all fields');
+                } else if (password != confirm) {
+                    alert('Password not match');
+                } else {
+                    $.ajax({
+                        url: 'http://127.0.0.1:8000/api/register-store-teacher',
+                        method: "POST",
+                        data: {
+                            name: name,
+                            teacher_id: teacher_id,
+                            email: email,
+                            role: role,
+                            password: password,
+                        },
+                        success: function(result) {
+                            if (result.status == 'success') {
+                                str +=
+                                    `<div class="alert alert-success" role="alert" id="reg"><strong>Account Created Successfully. Please Wait for admin approvel. </strong></div>`;
+                                $("#reg").append(str);
+                            } else {
+                                str +=
+                                    `<div class="alert alert-success" role="alert" id="reg"><strong>Account Not Created</strong></div>`;
+                                $("#reg").append(str);
+                            }
+                        }
+                    });
+                }
+            });
+            $('#submit2').click(function() {
+                let name = $('#name').val();
+                let student_id = $('#student_id').val();
+                let email = $('#email').val();
+                var password = $('#password').val();
+                var confirm = $('#confirm').val();
+                var role='student';
+                var str = ''
+                $("#reg").empty();
+                if (name == '' || student_id == '' || email == '' || role == '' || password == '' ||
+                    confirm == '') {
+                    alert('Please fill all fields');
+                } else if (password != confirm) {
+                    alert('Password not match');
+                } else {
+                    $.ajax({
+                        url: 'http://127.0.0.1:8000/api/register-store',
+                        method: "POST",
+                        data: {
+                            name: name,
+                            student_id: student_id,
+                            email: email,
+                            role: role,
+                            password: password,
+                        },
+                        success: function(result) {
+                            if (result.status == 'success') {
+                                str +=
+                                    `<div class="alert alert-success" role="alert" id="reg"><strong>Account Created Successfully. Please Wait for admin approvel. </strong></div>`;
+                                $("#reg").append(str);
+                                 $("#submit").reset();
+                                alert('Registration success');
+                                window.location.href = "{{ url('login') }}";
+                            } else {
+                                str +=
+                                    `<div class="alert alert-success" role="alert" id="reg"><strong>Account Not Created</strong></div>`;
+                                    
+                                $("#reg").append(str);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+</script>
 </body>
 </html>

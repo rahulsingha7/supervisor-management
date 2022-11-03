@@ -14,11 +14,11 @@ class CreateAssignCourseTeachersTable extends Migration
     public function up()
     {
         Schema::create('assign_course_teachers', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->unsignedBigInteger('course_code');
             $table->foreign('course_code')->references('id')->on('courses');
-            $table->unsignedBigInteger('name');
-            $table->foreign('name')->references('id')->on('users');
+            $table->unsignedBigInteger('teacher_id');
+            $table->foreign('teacher_id')->references('id')->on('users');
             $table->unsignedBigInteger('session_name');
             $table->foreign('session_name')->references('id')->on('sessions');
             $table->unsignedBigInteger('section_name');
